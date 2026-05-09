@@ -1,4 +1,6 @@
-<html lang="zh-TW"><head>
+<html lang="zh-TW">
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>三角函數題目產生器</title>
@@ -6,15 +8,58 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="p-4 min-h-screen pb-20">
     <div class="flex flex-col h-full w-full">
+
+        <!-- 2. 題目區 -->
+        <div class="mx-auto glass-card p-8 mb-6 text-center relative w-full">
+            <!-- 圓形倒數計時器容器 -->
+            <div id="timerContainer" class="absolute top-4 left-6 hidden">
+                <div class="relative flex items-center justify-center w-[72px] h-[72px]">
+                    <!-- SVG 圓形進度條 -->
+                    <svg class="w-full h-full transform -rotate-90">
+                        <rect width="12" height="18" x="56" y="27" rx="2" ry="2" fill="brown" />
+                        <!-- 1. 底圈 -->
+                        <circle cx="36" cy="36" r="21.5" stroke="rgb(170,170,170)" fill="transparent" stroke-width="3"
+                            opacity="1" />
+                        <circle cx="36" cy="36" r="20" stroke="currentColor" stroke-width="0" fill="orange"
+                            opacity="0.3" />
+                        <!-- 2. 刻度層 (重點！) -->
+                        <!-- r=20, 周長約 125.6。設定 dasharray 為 "2 8.46"，代表 2px 實線，8.46px 空白，共 12 刻度 -->
+                        <circle cx="36" cy="36" r="18" stroke="brown" stroke-width="4" fill="transparent"
+                            stroke-dasharray="2 7.42" stroke-dashoffset="1" class="z-10" />
+                        <!-- 3. 進度圈 (紅色) -->
+                        <circle id="timerBar" cx="36" cy="36" r="21.5" stroke="rgb(255,0,0)" stroke-width="3"
+                            fill="transparent" stroke-dashoffset="0" stroke-dasharray="135.1"
+                            class="text-red-500 transition-all linear" />
+                    </svg>
+                    <!-- 中間數字 -->
+                    <span id="timerText" class="absolute text-[16px] font-bold text-red-600">b</span>
+                </div>
+            </div>
+            <!-- 右上角：進度顯示 -->
+            <div id="progressCounter"
+                class="absolute top-4 right-6 text-xs font-bold bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
+                請選擇級數
+            </div>
+
+            <span class="text-sm text-gray-400 mb-2 block font-semibold tracking-widest uppercase">Question</span>
+            <div id="questionText" class="text-3xl font-bold text-gray-800 math-font leading-relaxed">
+                準備好了嗎？
+            </div>
+            <span id="questionTextAdd"
+                lass="text-sm text-gray-400 mb-2 block font-semibold tracking-widest hidden"></span>
+        </div>
         <!-- 1. 級數區 -->
-        <div class="max-w-md mx-auto mb-6 w-full">
-            <div class="flex justify-between items-center gap-2">
+        <div id='chooseLvlBox' class="mx-auto mb-4 w-full h-full">//裡面的用js生
+            <div class="grid grid-cols-3 items-center gap-2">
                 <!-- 1 級 -->
                 <div class="flex-1 relative">
                     <div class="flex items-center gap-1">
-                        <button onclick="initLevel(1)" id="btn-lvl1" class="lvlbtn w-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold active:scale-95 transition shadow-md">1 級</button>
+                        <button onclick="initLevel(1)" id="btn-lvl1"
+                            class="lvlbtn w-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold active:scale-95 transition shadow-md">1
+                            級</button>
                         <button id="lvl1info" onclick="mytogglePopover(event,'p1')" class="text-gray-300 p-1 lvlinfo">
                             <i class="fa-regular fa-circle-question"></i>
                         </button>
@@ -22,7 +67,7 @@
                     <div id="p1" class="popover">
                         <p class="font-bold border-b border-gray-600 mb-2 pb-1">1 級範圍</p>
                         <ul class="list-disc ml-4 space-y-1 text-gray-300">
-                            <li>30°, 45°, 60°</li>
+                            <li class="math-font">30°, 45°, 60°</li>
                             <li>sin, cos, tan</li>
                             <li>共 9 題</li>
                         </ul>
@@ -31,7 +76,9 @@
                 <!-- 2 級 (暫無功能) -->
                 <div class="flex-1 relative">
                     <div class="flex items-center gap-1">
-                        <button onclick="initLevel(2)" id="btn-lvl2" class="lvlbtn w-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold active:scale-95 transition shadow-md">2 級</button>
+                        <button onclick="initLevel(2)" id="btn-lvl2"
+                            class="lvlbtn w-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold active:scale-95 transition shadow-md">2
+                            級</button>
                         <button id="lvl2info" onclick="mytogglePopover(event,'p2')" class="text-gray-300 p-1 lvlinfo">
                             <i class="fa-regular fa-circle-question"></i>
                         </button>
@@ -39,7 +86,7 @@
                     <div id="p2" class="popover">
                         <p class="font-bold border-b border-gray-600 mb-2 pb-1">2 級範圍</p>
                         <ul class="list-disc ml-4 space-y-1 text-gray-300">
-                            <li><span class="math-font">0°≦θ<360°</span>的所有特殊角</li>
+                            <li><span class="math-font">0°≦θ<360°< /span>的所有特殊角</li>
                             <li>sin, cos, tan</li>
                             <li>共 46 題</li>
                         </ul>
@@ -48,7 +95,9 @@
                 <!-- 3 級 (暫無功能) -->
                 <div class="flex-1 relative">
                     <div class="flex items-center gap-1">
-                        <button onclick="initLevel(3)" id="btn-lvl3" class="lvlbtn w-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold active:scale-95 transition shadow-md">3 級</button>
+                        <button onclick="initLevel(3)" id="btn-lvl3"
+                            class="lvlbtn w-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold active:scale-95 transition shadow-md">3
+                            級</button>
                         <button id="lvl3info" onclick="mytogglePopover(event,'p3')" class="text-gray-300 p-1 lvlinfo">
                             <i class="fa-regular fa-circle-question"></i>
                         </button>
@@ -60,99 +109,62 @@
                 </div>
             </div>
         </div>
-
-        <!-- 2. 題目區 -->
-        <div class="max-w-md mx-auto glass-card p-8 mb-6 text-center relative mt-8 w-full">
-            <!-- 圓形倒數計時器容器 -->
-<div id="timerContainer" class="absolute top-4 left-6 hidden">
-    <div class="relative flex items-center justify-center w-[72px] h-[72px]">
-        <!-- SVG 圓形進度條 -->
-        <svg class="w-full h-full transform -rotate-90">
-            <rect width="12" height="18" x="56" y="27" rx="2" ry="2" fill="brown" />
-            <!-- 1. 底圈 -->
-             <circle cx="36" cy="36" r="21.5" stroke="rgb(170,170,170)" fill="transparent" stroke-width="3" opacity="1"/>
-            <circle cx="36" cy="36" r="20" stroke="currentColor" stroke-width="0" fill="orange" opacity="0.3" />
-            <!-- 2. 刻度層 (重點！) -->
-            <!-- r=20, 周長約 125.6。設定 dasharray 為 "2 8.46"，代表 2px 實線，8.46px 空白，共 12 刻度 -->
-            <circle cx="36" cy="36" r="18" stroke="brown" stroke-width="4" fill="transparent" 
-                stroke-dasharray="2 7.42" stroke-dashoffset="1" class="z-10" />
-            <!-- 3. 進度圈 (紅色) -->
-            <circle id="timerBar" cx="36" cy="36" r="21.5" stroke="rgb(255,0,0)" stroke-width="3" fill="transparent" 
-                 stroke-dashoffset="0" stroke-dasharray="135.1"
-                class="text-red-500 transition-all linear" />
-        </svg>
-        <!-- 中間數字 -->
-        <span id="timerText" class="absolute text-[16px] font-bold text-red-600">b</span>
-    </div>
-</div>
-            <!-- 右上角：進度顯示 -->
-            <div id="progressCounter" class="absolute top-4 right-6 text-xs font-bold bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
-                請選擇級數
+        <div id="ansUIBox" class="flex flex-col mx-auto w-full h-full hidden">
+            <!-- 3. 解答框區 -->
+            <div id="answerBox" class="flex items-center mx-auto mb-4 w-full hidden">
+                    <input readonly type="text" id="answerInput" spellcheck="false" autocomplete="off"
+                        placeholder="請用下方鍵盤輸入答案"
+                        class=" flex p-4 rounded-xl border-2 border-transparent focus:border-blue-500 focus:outline-none shadow-inner bg-white text-lg font-medium transition-all w-full">
             </div>
-
-            <span class="text-sm text-gray-400 mb-2 block font-semibold tracking-widest uppercase">Question</span>
-            <div id="questionText" class="text-3xl font-bold text-gray-800 math-font leading-relaxed">
-                準備好了嗎？
+            <div id="resultBox"
+                class="hidden flex items-centerjustify-between p-4 rounded-xl mb-3 shadow-sm transition-colors border">
+                <div class="flex items-center gap-3">
+                    <i id="resultIcon" class="fa-solid"></i>
+                    <span id="resultText" class="font-bold"></span>
+                </div>
             </div>
-            <span id="questionTextAdd" lass="text-sm text-gray-400 mb-2 block font-semibold tracking-widest hidden"></span>
-        </div>
-
-        <!-- 3. 解答框區 -->
-        <div id="answerBox" class="max-w-md mx-auto mb-4 w-full">
-            <div class="flex gap-2">
-                <input readonly type="text" id="answerInput" spellcheck="false" autocomplete="off" placeholder="請用下方鍵盤輸入答案" class=" flex-1 p-4 rounded-xl border-2 border-transparent focus:border-blue-500 focus:outline-none shadow-inner bg-white text-lg font-medium transition-all">
-                
-                <!--<button onclick="checkAnswer()" class="px-6 py-4 bg-gray-800 text-white rounded-xl font-bold active:scale-95 transition shadow-lg">輸入</button>-->
-            </div>
-        </div>
-        <div id="resultBox" class="hidden flex items-center justify-between p-4 rounded-xl mb-3 shadow-sm transition-colors border">
-            <div class="flex items-center gap-3">
-                <i id="resultIcon" class="fa-solid"></i>
-                <span id="resultText" class="font-bold"></span>
-            </div>
-        </div>
-        <div class="flex flex-col justify-end max-w-md h-full">
             <!-- 4. 虛擬鍵盤區 -->
-                <div id="keyboard" class="grid grid-cols-4 gap-2 h-full">
-                    <!-- 第一排 -->
-                    <button onclick="press('1')" class="key-btn">1</button>
-                    <button onclick="press('2')" class="key-btn">2</button>
-                    <button onclick="press('3')" class="key-btn">3</button>
-                    <button onclick="press('/')" class="key-btn bg-gray-100 text-blue-600">/</button>
-                    
-                    <!-- 第二排 -->
-                    <button onclick="press('4')" class="key-btn">4</button>
-                    <button onclick="press('5')" class="key-btn">5</button>
-                    <button onclick="press('6')" class="key-btn">6</button>
-                    <button onclick="press('-')" class="key-btn bg-gray-100 text-blue-600">-</button>
-                    
-                    <!-- 第三排 -->
-                    <button onclick="press('7')" class="key-btn">7</button>
-                    <button onclick="press('8')" class="key-btn">8</button>
-                    <button onclick="press('9')" class="key-btn">9</button>
-                    <button onclick="press('√')" class="key-btn bg-gray-100 text-blue-600">√</button>
-                    
-                    <!-- 第四排 -->
-                    <button onclick="press('0')" class="key-btn">0</button>
-                    <button onclick="backspace()" class="key-btn bg-gray-100 text-red-500">
-                        <i class="fa-solid fa-backspace"></i>
-                    </button>
-                    <button onclick="checkAnswer()" class="key-btn col-span-2 bg-gray-800 text-white text-lg">ENTER</button>
-                </div>
+            <div id="keyboard" class="flex-1 grid grid-cols-4 grid-rows-4 gap-2 w-full hidden">
+                <!-- 第一排 -->
+                <button onclick="press('1')" class="key-btn">1</button>
+                <button onclick="press('2')" class="key-btn">2</button>
+                <button onclick="press('3')" class="key-btn">3</button>
+                <button onclick="press('/')" class="key-btn bg-gray-100 text-blue-600">/</button>
+
+                <!-- 第二排 -->
+                <button onclick="press('4')" class="key-btn">4</button>
+                <button onclick="press('5')" class="key-btn">5</button>
+                <button onclick="press('6')" class="key-btn">6</button>
+                <button onclick="press('-')" class="key-btn bg-gray-100 text-blue-600">-</button>
+
+                <!-- 第三排 -->
+                <button onclick="press('7')" class="key-btn">7</button>
+                <button onclick="press('8')" class="key-btn">8</button>
+                <button onclick="press('9')" class="key-btn">9</button>
+                <button onclick="press('√')" class="key-btn bg-gray-100 text-blue-600">√</button>
+
+                <!-- 第四排 -->
+                <button onclick="press('0')" class="key-btn">0</button>
+                <button onclick="backspace()" class="key-btn bg-gray-100 text-red-500">
+                    <i class="fa-solid fa-backspace"></i>
+                </button>
+                <button onclick="checkAnswer()" class="key-btn col-span-2 bg-gray-800 text-white text-lg">ENTER</button>
+            </div>
             <!-- 5. 答案與詳解區 -->
-            <div id="resultArea" class="hidden grid grid-rows-4 grid-cols-4 gap-2 h-full">
+            <div id="resultArea" class="hidden grid grid-rows-4 grid-cols-4 gap-2 w-full h-full">
                 <div class="row-span-3 col-span-4">
-                
-                <!-- 下半部：說明圖片框 (預設隱藏) -->
-                <div id="detailImageArea" class="hidden mt-4 border-t border-gray-100">
-                    <p class="text-xs text-gray-400 mb-2 font-bold uppercase tracking-wider">詳解</p>
-                    <img id="explanationImg" alt="解題輔助圖" class="rounded-lg shadow-inner border border-gray-100">
-                    <!--<p id="explanationNote" class="mt-2 text-sm text-gray-600 leading-relaxed"></p>-->
-                </div>
+
+                    <!-- 下半部：說明圖片框 (預設隱藏) -->
+                    <div id="detailImageArea" class="hidden mt-4 border-t border-gray-100">
+                        <p class="text-xs text-gray-400 mb-2 font-bold uppercase tracking-wider">詳解</p>
+                        <img id="explanationImg" alt="解題輔助圖" class="rounded-lg shadow-inner border border-gray-100">
+                        <!--<p id="explanationNote" class="mt-2 text-sm text-gray-600 leading-relaxed"></p>-->
+                    </div>
                 </div>
                 <!-- 下一題按鈕 -->
-                    <div class="col-span-2"></div>
-                <button id="nextBtn" onclick="renderQuestion()" class="hidden key-btn col-span-2 bg-red-500 text-white font-bold">
+                <div class="col-span-2"></div>
+                <button id="nextBtn" onclick="renderQuestion()"
+                    class="hidden key-btn col-span-2 bg-red-500 text-white font-bold">
                     下一題 <i class="fa-solid fa-arrow-right ml-2"></i>
                 </button>
             </div>
@@ -160,4 +172,6 @@
     </div>
     <script src="body.js"></script>
 
-</body></html>
+</body>
+
+</html>

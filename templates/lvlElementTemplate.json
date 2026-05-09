@@ -1,0 +1,11 @@
+[
+"<div class='flex-1 col-span-2 relative'>",
+    "<div class='flex h-full w-full'>",
+        "<button onclick='initLevel(${n})' id='btn-lvl${n}' class='lvlbtn w-full h-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold active:scale-95 transition shadow-md'>${n} 級</button>",
+        "<button id='lvl${n}info' onclick='mytogglePopover(event,\"p${n}\")' class='absolute right-0 bottom-0 text-gray-300 p-1 lvlinfo'>",
+            "<i class='fa-regular fa-circle-question'></i>",
+        "</button>",
+    "</div>",
+    "<div id='p${n}' class='popover'>",
+        "<p class='font-bold border-b border-gray-600 mb-2 pb-1'>${n} 級範圍</p>"
+]

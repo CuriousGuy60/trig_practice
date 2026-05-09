@@ -30,7 +30,54 @@ let remainingTicks = totalTicks; // 剩餘tick
 function get(a) {
     return JSON.parse(localStorage.getItem(a));
 }
+async function loadLevels() {
+    try {
+        // 1. 使用 fetch 抓取資料
+        const lvlResponse = await fetch("lvltext.json");
+        const lvlText = await lvlResponse.json();
 
+        // 這裡先抓取模板（假設你一定要用 JSON 存模板）
+        const tempResp = await fetch("templates/lvlElementTemplate.json");
+        const normalTemplateArray = await tempResp.json();
+        const normalTemplate = normalTemplateArray.join("");
+
+        const dispResp = await fetch("templates/lvlElementTemplateDisabled.json");
+        const disabledTemplateArray = await dispResp.json();
+        const disabledTemplate = disabledTemplateArray.join("");
+
+        const chooseLvlBox = document.getElementById("chooseLvlBox");
+        let toInsert = '<div class="grid grid-cols-6 gap-2 justify-center mx-auto h-full">';
+
+        for (let i = 0; i < lvlText.length; ++i) {
+            let currentLvlHtml = ""; // 每次重置
+
+            if (lvlText[i].length > 0) {
+                // 替換 ${n} 並建立基礎 HTML
+                currentLvlHtml = normalTemplate.replace(/\${n}/g, i + 1);
+                currentLvlHtml += "<ul class=\"list-disc ml-4 space-y-1 text-gray-300\">";
+
+                lvlText[i].forEach(str => {
+                    currentLvlHtml+=str.replaceAll(/M\{(.*)\}/g,"<span class='math-font'>$1</span>")
+                });
+                currentLvlHtml += "</ul></div></div>"; // 關閉 popover 的 div
+            } else {
+                currentLvlHtml = disabledTemplate;
+            }
+            toInsert += currentLvlHtml;
+        }
+        toInsert+="<div class='col-span-3 w-full h-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold transition shadow-md'></div>";
+        toInsert+="<div class='col-span-3 w-full h-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold transition shadow-md'></div>";
+
+        toInsert += "</div>";
+        chooseLvlBox.innerHTML = toInsert;
+
+    } catch (error) {
+        console.error("載入失敗:", error);
+    }
+}
+
+// 執行
+loadLevels();
 // --- 出題邏輯 ---
 function initLevel(lvl) {
     if (get(`trig_pool`).length > 0) if (!confirm(`確定要開新的${lvl}級練習嗎？進度將會重置。`)) return;
@@ -39,6 +86,8 @@ function initLevel(lvl) {
     const funcs = [`sin`, `cos`, `tan`];
     const allLvlBtn = document.querySelectorAll('.lvlbtn');
     allLvlBtn.forEach(btn=>{
+        
+        if(btn.innerText == "敬請期待") return;
         let num = btn.id.slice(7);
         let txt = "lvlbtn w-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold active:scale-95 transition shadow-md"
         if (num == lvl.toString()){
@@ -125,7 +174,8 @@ function shuffle(array) {
 }
 function renderQuestion() {
     document.getElementById('resultArea').classList.add('hidden');
-    document.getElementById('keyboard').classList.remove('hidden');
+    document.getElementById('ansUIBox').classList.remove('hidden');
+    document.getElementById('chooseLvlBox').classList.add('hidden');
     document.getElementById('detailImageArea').classList.add("hidden");
     document.getElementById('nextBtn').classList.add("hidden");
     document.getElementById('answerInput').value = "";
@@ -136,6 +186,7 @@ function renderQuestion() {
         startTimer();
         document.getElementById('questionTextAdd').classList.add('hidden');
         document.getElementById('answerBox').classList.remove('hidden');
+        document.getElementById('keyboard').classList.remove('hidden');
         document.getElementById('progressCounter').innerText = '題目' + (parseInt(lvlqnum[get('lvl')], 10) - questionPool.length + 1).toString() + '/' + lvlqnum[get('lvl')];
         document.getElementById('questionText').innerText = questionPool[0].display;
         document.getElementById('timerContainer').classList.remove('hidden');
@@ -146,10 +197,11 @@ function renderQuestion() {
         document.getElementById('timerContainer').classList.add('hidden');
         document.getElementById('answerBox').classList.add('hidden');
         if (wrong_pool.length>0){
-            
+            document.getElementById('questionTextAdd').innerText = "繼續複習？";
+            document.getElementById('questionText').innerText = "⚠️ 還有錯題";
         }else{
             document.getElementById('questionTextAdd').innerText = "全對！💯";
-        document.getElementById('questionText').innerText = "🎉 放鞭炮囉！";
+            document.getElementById('questionText').innerText = "🎉 放鞭炮囉！";
         }
     }
 }
@@ -288,7 +340,7 @@ function onTimeUp() {
     let questionPool = get('trig_pool');
     let currentQuestion = questionPool[0];
     document.getElementById('keyboard').classList.add('hidden');
-    // 超時錯誤：移至末尾
+    // 錯誤：移至末尾
         let wrong_pool = get("wrong_pool");
         questionPool.push(currentQuestion);
         questionPool.splice(0, 1)[0]
@@ -308,7 +360,7 @@ function onTimeUp() {
         localStorage.setItem('trig_pool', JSON.stringify(questionPool));
         resultBox.className = "flex items-center justify-between p-4 bg-red-50 border-red-200 text-red-700 rounded-xl mb-3 border shadow-sm";
         resultIcon.className = "fa-solid fa-circle-xmark text-red-500 text-xl";
-        resultText.innerText = `時間到！正解：${currentQuestion.answer[0]}`;
+        resultText.innerText = `逾時，正解：${currentQuestion.answer[0]}`;
         document.getElementById('detailImageArea').classList.remove("hidden");
         document.getElementById('nextBtn').classList.remove("hidden");
 }
