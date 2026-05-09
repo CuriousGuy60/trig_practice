@@ -131,6 +131,7 @@ function renderQuestion() {
     document.getElementById('answerInput').value = "";
     document.getElementById('resultBox').classList.add('hidden');
     let questionPool = get('trig_pool');
+    let wrong_pool = get('wrong_pool');
     if (questionPool.length > 0) {
         startTimer();
         document.getElementById('questionTextAdd').classList.add('hidden');
@@ -140,12 +141,16 @@ function renderQuestion() {
         document.getElementById('timerContainer').classList.remove('hidden');
     }
     else {
-        document.getElementById('questionTextAdd').innerText = "全對！💯"
-        document.getElementById('questionText').innerText = "🎉 放鞭炮囉！";
         document.getElementById('questionTextAdd').classList.remove('hidden');
         document.getElementById('keyboard').classList.add('hidden');
         document.getElementById('timerContainer').classList.add('hidden');
         document.getElementById('answerBox').classList.add('hidden');
+        if (wrong_pool.length>0){
+            
+        }else{
+            document.getElementById('questionTextAdd').innerText = "全對！💯";
+        document.getElementById('questionText').innerText = "🎉 放鞭炮囉！";
+        }
     }
 }
 function checkAnswer() {
