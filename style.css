@@ -1,0 +1,80 @@
+body { background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+.glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+.math-font { font-family: "Times New Roman", Times, serif; font-style: italic; }
+
+/* 提示框動畫與樣式 */
+.popover {
+    display: none;
+    position: absolute;
+    top: 115%;
+    left:0;
+    z-index: 50;
+    width: 220px;
+    background: #1f2937;
+    color: white;
+    padding: 12px;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+#p3{right:0;left:auto;}
+/*.popover::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 15px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent #1f2937 transparent;
+}*/
+.show { display: block; animation: fadeIn 0.2s ease-out; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* 標準 CSS 版鍵盤按鈕樣式 (替換掉 @apply) */
+.key-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background-color: white;
+    border: 2px solid #f3f4f6; /* border-gray-100 */
+    color: #1f2937; /* text-gray-800 */
+    border-radius: 0.75rem; /* rounded-xl */
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 700; /* font-bold */
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.key-btn:active {
+    transform: scale(0.95);
+    background-color: #e5e7eb; /* active:bg-gray-200 */
+}
+
+/* 輸入框完全穿透樣式 */
+#answerInput {
+    pointer-events: none; /* 完全無法點擊 */
+    user-select: none;
+    -webkit-user-select: none;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* 針對行動裝置安全區域 (如 iPhone 下方橫條) */
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 確保鍵盤不會因為內容過多而被擠壓變形 */
+#keyboard {
+    flex-shrink: 0;
+}

@@ -1,0 +1,146 @@
+<html><head></head>
+<body>
+    <button onclick="nobro(event)">abcd</button>
+    <div class="flex flex-col h-full w-full max-w-md">
+        <!-- 1. 級數區 -->
+        <div class="max-w-md mx-auto mb-6 w-full">
+            <div class="flex justify-between items-center gap-2">
+                <!-- 1 級 -->
+                <div class="flex-1 relative">
+                    <div class="flex items-center gap-1">
+                        <button onclick="initLevel1()" id="btn-lvl1" class="w-full py-3 bg-blue-500 text-white rounded-xl font-bold active:scale-95 transition shadow-md">1 級</button>
+                        <button onclick="togglePopover('p1')" class="text-blue-400 p-1 info">
+                            <i class="fa-regular fa-circle-question"></i>
+                        </button>
+                    </div>
+                    <div id="p1" class="popover">
+                        <p class="font-bold border-b border-gray-600 mb-2 pb-1">1 級範圍</p>
+                        <ul class="list-disc ml-4 space-y-1 text-gray-300">
+                            <li>30°, 45°, 60°</li>
+                            <li>sin, cos, tan</li>
+                            <li>共 27 題 (每種 3 遍)</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 2 級 (暫無功能) -->
+                <div class="flex-1 relative">
+                    <div class="flex items-center gap-1">
+                        <button class="w-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold">2 級</button>
+                        <button onclick="togglePopover('p2')" class="text-gray-300 p-1 info">
+                            <i class="fa-regular fa-circle-question"></i>
+                        </button>
+                    </div>
+                    <div id="p2" class="popover">
+                        <p class="font-bold border-b border-gray-600 mb-2 pb-1">2 級範圍</p>
+                        <p class="text-gray-300">即將推出：廣義角與單位圓。</p>
+                    </div>
+                </div>
+                <!-- 3 級 (暫無功能) -->
+                <div class="flex-1 relative">
+                    <div class="flex items-center gap-1">
+                        <button class="w-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold">3 級</button>
+                        <button onclick="togglePopover('p3')" class="text-gray-300 p-1 info">
+                            <i class="fa-regular fa-circle-question"></i>
+                        </button>
+                    </div>
+                    <div id="p3" class="popover">
+                        <p class="font-bold border-b border-gray-600 mb-2 pb-1">3 級範圍</p>
+                        <p class="text-gray-300">即將推出：和差角公式與恆等式。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 題目區 -->
+        <div class="max-w-md mx-auto glass-card p-8 mb-6 text-center relative mt-8 w-full">
+            <div id="progressCounter" class="absolute top-4 right-6 text-xs font-bold bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
+                請選擇級數
+            </div>
+            <span class="text-sm text-gray-400 mb-2 block font-semibold tracking-widest uppercase">Question</span>
+            <div id="questionText" class="text-3xl font-bold text-gray-800 math-font leading-relaxed">
+                準備好了嗎？
+            </div>
+        </div>
+
+        <!-- 3. 解答框區 -->
+        <div id="answerBox" class="max-w-md mx-auto mb-4 w-full">
+            <div class="flex gap-2">
+                <input readonly type="text" id="answerInput" spellcheck="false" autocomplete="off" placeholder="請用下方鍵盤輸入答案" class=" flex-1 p-4 rounded-xl border-2 border-transparent focus:border-blue-500 focus:outline-none shadow-inner bg-white text-lg font-medium transition-all">
+                
+                <!--<button onclick="checkAnswer()" class="px-6 py-4 bg-gray-800 text-white rounded-xl font-bold active:scale-95 transition shadow-lg">輸入</button>-->
+            </div>
+        </div>
+        <div id="resultBox" class="hidden flex items-center justify-between p-4 rounded-xl mb-3 shadow-sm transition-colors border">
+            <div class="flex items-center gap-3">
+                <i id="resultIcon" class="fa-solid"></i>
+                <span id="resultText" class="font-bold"></span>
+            </div>
+        </div>
+        <div class="flex flex-col justify-end max-w-md h-full">
+            <!-- 4. 虛擬鍵盤區 -->
+                <div id="keyboard" class="grid grid-cols-4 gap-2 h-full">
+                    <!-- 第一排 -->
+                    <button onclick="press('1')" class="key-btn">1</button>
+                    <button onclick="press('2')" class="key-btn">2</button>
+                    <button onclick="press('3')" class="key-btn">3</button>
+                    <button onclick="press('/')" class="key-btn bg-gray-100 text-blue-600">/</button>
+                    
+                    <!-- 第二排 -->
+                    <button onclick="press('4')" class="key-btn">4</button>
+                    <button onclick="press('5')" class="key-btn">5</button>
+                    <button onclick="press('6')" class="key-btn">6</button>
+                    <button onclick="press('-')" class="key-btn bg-gray-100 text-blue-600">-</button>
+                    
+                    <!-- 第三排 -->
+                    <button onclick="press('7')" class="key-btn">7</button>
+                    <button onclick="press('8')" class="key-btn">8</button>
+                    <button onclick="press('9')" class="key-btn">9</button>
+                    <button onclick="press('√')" class="key-btn bg-gray-100 text-blue-600">√</button>
+                    
+                    <!-- 第四排 -->
+                    <button onclick="press('0')" class="key-btn">0</button>
+                    <button onclick="backspace()" class="key-btn bg-gray-100 text-red-500">
+                        <i class="fa-solid fa-backspace"></i>
+                    </button>
+                    <button onclick="checkAnswer()" class="key-btn col-span-2 bg-gray-800 text-white text-lg">ENTER</button>
+                </div>
+            <!-- 5. 答案與詳解區 -->
+            <div id="resultArea" class="hidden grid grid-rows-4 grid-cols-4 gap-2 h-full">
+                <div class="row-span-3 col-span-4">
+                
+                <!-- 下半部：說明圖片框 (預設隱藏) -->
+                <div id="detailImageArea" class="hidden mt-4 border-t border-gray-100">
+                    <p class="text-xs text-gray-400 mb-2 font-bold uppercase tracking-wider">詳解</p>
+                    <img id="explanationImg" alt="解題輔助圖" class="rounded-lg shadow-inner border border-gray-100">
+                    <!--<p id="explanationNote" class="mt-2 text-sm text-gray-600 leading-relaxed"></p>-->
+                </div>
+                </div>
+                <!-- 下一題按鈕 -->
+                    <div class="col-span-2"></div>
+                <button id="nextBtn" onclick="renderQuestion()" class="hidden key-btn col-span-2 bg-red-500 text-white font-bold">
+                    下一題 <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script class="">
+    localStorage.setItem('abcdefg','1');
+        function nobro(e){
+            let id = 'p1';
+            localStorage.setItem('Ustartedbro','1');
+            e.stopPropagation();
+    localStorage.setItem('popppp','1');
+    const targetPopover = document.getElementById(id);
+    const allPopovers = document.querySelectorAll('.popover');
+
+    // 關閉所有其他的 popover
+    allPopovers.forEach(p => {
+        if (p.id !== id) p.classList.remove('show');
+    });
+
+    // 切換當前的 popover
+    targetPopover.classList.add('show');
+        }
+    </script>
+</body>
+</html>

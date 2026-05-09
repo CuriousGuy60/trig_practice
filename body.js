@@ -1,0 +1,320 @@
+// --- 1級邏輯變數 ---
+const angles = [30, 45, 60];
+const funcs = ['sin', 'cos', 'tan'];
+const standardAnswers = {
+    'cos0': ['1'], 'sin0': ['0'], 'tan0': ['0'],
+    'sin30': ['1/2'], 'sin45': ['1/√2', '√2/2'], 'sin60': ['√3/2'],
+    'cos30': ['√3/2'], 'cos45': ['1/√2', '√2/2'], 'cos60': ['1/2'],
+    'tan30': ['1/√3', '√3/3'], 'tan45': ['1'], 'tan60': ['√3']
+};
+const lvlqnum = { '1': '9', '2': '46', '3': '0' };
+let temp = get('trig_pool');
+if (temp != null && temp.length > 0) {
+    /*renderQuestion();
+    document.getElementById("btn-lvl"+get('lvl')).classList = "lvlbtn w-full py-3 bg-blue-500 text-white rounded-xl font-bold active:scale-95 transition shadow-md";*/
+} else {
+    localStorage.setItem('trig_pool', '[]');
+}
+if (get('wrong_pool') == null) { localStorage.setItem('wrong_pool', '[]'); }
+if (get('lvl') == null) { localStorage.setItem('lvl', '1'); }
+//init timer
+let timerInterval;
+let timeLimit = 10;//一題10秒
+let ticksPerSec;
+let totalTicks; 
+let tick;
+//document.getElementById("timerBar").classList.add(`duration-${Math.floor(tick)}`);
+let remainingTicks = totalTicks; // 剩餘tick
+
+// --- 核心功能：存取 localStorage ---
+function get(a) {
+    return JSON.parse(localStorage.getItem(a));
+}
+
+// --- 出題邏輯 ---
+function initLevel(lvl) {
+    if (get(`trig_pool`).length > 0) if (!confirm(`確定要開新的${lvl}級練習嗎？進度將會重置。`)) return;
+    let questionPool = [];
+    localStorage.setItem(`wrong_pool`, `[]`);
+    const funcs = [`sin`, `cos`, `tan`];
+    const allLvlBtn = document.querySelectorAll('.lvlbtn');
+    allLvlBtn.forEach(btn=>{
+        let num = btn.id.slice(7);
+        let txt = "lvlbtn w-full py-3 bg-white text-gray-400 border border-gray-200 rounded-xl font-bold active:scale-95 transition shadow-md"
+        if (num == lvl.toString()){
+            txt = "lvlbtn w-full py-3 bg-blue-500 text-white rounded-xl font-bold active:scale-95 transition shadow-md";
+        }
+        document.getElementById("btn-lvl"+num).classList = txt;
+    });
+    
+    switch (lvl) {
+        case 1:
+            {
+                let angles = [30, 45, 60];
+                funcs.forEach(f => {
+                    angles.forEach(a => {
+                        questionPool.push({ display: `${f}${a}°`, key: `${f}${a}`, answer: standardAnswers[`${f}${a}`] });
+                    });
+                });
+                break;
+            }
+        case 2:
+            {
+                let angles = [0, 30, 45, 60];
+                funcs.forEach(f => {
+                    angles.forEach(a => {
+                        //original
+                        questionPool.push({ display: `${f}${a}°`, key: `${f}${a}`, answer: standardAnswers[`${f}${a}`] });
+                        //push 90
+                        switch (f) {
+                            case `sin`:
+                                questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: standardAnswers[`cos${a}`] });
+                                break;
+                            case `cos`:
+                                if (a == 0) questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: [`0`] });
+                                else questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: standardAnswers[`sin${a}`] .map(e => `-` + e)});
+                                break;
+                            case `tan`:
+                                if (a == 0) break;
+                                else questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: standardAnswers[`tan${a}`] .map(e => `-` + e)});
+                                break;
+                        }
+                        //push180
+                        switch (f) {
+                            case `tan`:
+                                questionPool.push({ display: `${f}${a + 180}°`, key: `${f}${a + 180}`, answer: standardAnswers[`${f}${a}`] });
+                                break;
+                            default:
+                                questionPool.push({ display: `${f}${a + 180}°`, key: `${f}${a + 180}`, answer: standardAnswers[`${f}${a}`] .map(e => (e === `0` ? `0` : `-` + e))});
+                                break;
+                        }
+                        //push 270
+                        switch (f) {
+                            case `sin`:
+                                questionPool.push({ display: `${f}${a + 270}°`, key: `${f}${a + 270}`, answer: standardAnswers[`cos${a}`].map(e => (e === `0` ? `0` : `-` + e)) });
+                                break;
+                            case `cos`:
+                                questionPool.push({ display: `${f}${a + 270}°`, key: `${f}${a + 270}`, answer: standardAnswers[`sin${a}`] });
+                                break;
+                            case `tan`:
+                                if (a == 0) break;
+                                else questionPool.push({ display: `${f}${a + 270}°`, key: `${f}${a + 270}`, answer: standardAnswers[`tan${a}`] .map(e => `-` + e)});
+                                break;
+                        }
+                    });
+                });
+                break;
+            }
+        default: return;
+    }
+
+    shuffle(questionPool);
+    localStorage.setItem('lvl',lvl.toString());
+    localStorage.setItem('trig_pool', JSON.stringify(questionPool));
+    renderQuestion();
+}
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        // Generate a random index from 0 to i
+        const j = Math.floor(Math.random() * (i + 1));
+
+        // Swap elements array[i] and array[j]
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+function renderQuestion() {
+    document.getElementById('resultArea').classList.add('hidden');
+    document.getElementById('keyboard').classList.remove('hidden');
+    document.getElementById('detailImageArea').classList.add("hidden");
+    document.getElementById('nextBtn').classList.add("hidden");
+    document.getElementById('answerInput').value = "";
+    document.getElementById('resultBox').classList.add('hidden');
+    let questionPool = get('trig_pool');
+    if (questionPool.length > 0) {
+        startTimer();
+        document.getElementById('questionTextAdd').classList.add('hidden');
+        document.getElementById('answerBox').classList.remove('hidden');
+        document.getElementById('progressCounter').innerText = '題目' + (parseInt(lvlqnum[get('lvl')], 10) - questionPool.length + 1).toString() + '/' + lvlqnum[get('lvl')];
+        document.getElementById('questionText').innerText = questionPool[0].display;
+        document.getElementById('timerContainer').classList.remove('hidden');
+    }
+    else {
+        document.getElementById('questionTextAdd').innerText = "全對！💯"
+        document.getElementById('questionText').innerText = "🎉 放鞭炮囉！";
+        document.getElementById('questionTextAdd').classList.remove('hidden');
+        document.getElementById('keyboard').classList.add('hidden');
+        document.getElementById('timerContainer').classList.add('hidden');
+        document.getElementById('answerBox').classList.add('hidden');
+    }
+}
+function checkAnswer() {
+    if (get('trig_pool').length = 0) return;
+    clearInterval(timerInterval);
+    const userInput = document.getElementById('answerInput').value.replaceAll(' ', '');
+    const resultArea = document.getElementById('resultArea');
+    const resultBox = document.getElementById('resultBox');
+    const resultIcon = document.getElementById('resultIcon');
+    const resultText = document.getElementById('resultText');
+    const answerBox = document.getElementById('answerBox');
+    resultArea.classList.remove('hidden');
+    answerBox.classList.add('hidden');
+    resultBox.classList.remove('hidden');
+    let questionPool = get('trig_pool');
+    let currentQuestion = questionPool[0];
+    document.getElementById('keyboard').classList.add('hidden');
+    if (currentQuestion.answer.includes(userInput)) {
+        // 正確
+        resultBox.className = "flex items-center justify-between p-4 bg-green-50 border-green-200 text-green-700 rounded-xl mb-3 border shadow-sm";
+        resultIcon.className = "fa-solid fa-circle-check text-green-500 text-xl";
+        resultText.innerText = '正確！自動進入下一題';
+        questionPool.splice(0, 1);
+        localStorage.setItem('trig_pool', JSON.stringify(questionPool));
+        setTimeout(renderQuestion, 600);
+    } else {
+        // 錯誤：移至末尾
+        let wrong_pool = get("wrong_pool");
+        questionPool.push(currentQuestion);
+        questionPool.splice(0, 1)[0]
+        if (!wrong_pool.includes(currentQuestion)) wrong_pool.push(currentQuestion);
+        let key = currentQuestion.key.slice(-2);
+        //localStorage.setItem('key',key);
+        if (key == "45") {
+            document.getElementById('explanationImg').src = "454590.png";
+        } else if (key == "30") {
+            document.getElementById('explanationImg').src = "306090.png";
+        } else if (key == "60"){
+            document.getElementById('explanationImg').src = "603090.png";
+        } else {
+
+        }
+        localStorage.setItem('wrong_pool', JSON.stringify(wrong_pool));
+        localStorage.setItem('trig_pool', JSON.stringify(questionPool));
+        resultBox.className = "flex items-center justify-between p-4 bg-red-50 border-red-200 text-red-700 rounded-xl mb-3 border shadow-sm";
+        resultIcon.className = "fa-solid fa-circle-xmark text-red-500 text-xl";
+        resultText.innerText = `錯誤，正解：${currentQuestion.answer[0]}`;
+        document.getElementById('detailImageArea').classList.remove("hidden");
+        document.getElementById('nextBtn').classList.remove("hidden");
+    }
+}
+
+// --- 工具功能 ---
+function press(a) {
+    const input = document.getElementById('answerInput');
+    input.value += a;
+}
+function backspace() {
+    const input = document.getElementById('answerInput');
+    const val = input.value;
+
+    if (val) {
+        // 刪除游標前的一個字
+        input.value = val.slice(0, -1);
+    }
+}
+function mytogglePopover(e, id) { //togglePopover與原生函數撞名
+    // 阻止事件冒泡，避免觸發 window 的點擊事件
+    e.stopPropagation();
+    localStorage.setItem('popppp', '1');
+    const targetPopover = document.getElementById(id);
+    const allPopovers = document.querySelectorAll('.popover');
+
+    // 關閉所有其他的 popover
+    allPopovers.forEach(p => {
+        if (p.id !== id) {
+            p.classList.remove('show');
+            document.getElementById("lvl"+p.id.slice(1)+"info").classList = "text-gray-300 p-1 lvlinfo";
+        }else{
+            document.getElementById("lvl"+p.id.slice(1)+"info").classList = "text-blue-400 p-1 lvlinfo";
+        }
+    });
+
+    // 切換當前的 popover
+    targetPopover.classList.add('show');
+}
+//start of timer
+function startTimer() {
+    ticksPerSec = 100;
+    totalTicks = timeLimit*ticksPerSec; // 假設一題 a = 10 秒
+    tick = 1000/ticksPerSec;
+    remainingTicks = totalTicks;
+    updateTimerUI();
+
+    document.getElementById('timerContainer').classList.remove('hidden');
+
+    timerInterval = setInterval(() => {
+        remainingTicks--;
+        localStorage.setItem("remainingTicks",remainingTicks.toString());
+        updateTimerUI();
+
+        if (remainingTicks <= 0) {
+            clearInterval(timerInterval);
+            onTimeUp(); // 時間到的處理函數
+        }
+    }, tick);
+}
+
+function updateTimerUI() {
+    const timerBar = document.getElementById('timerBar');
+    const timerText = document.getElementById('timerText');
+    
+    // 計算圓周長：2 * π * r = 2 * 3.14 * 21.5
+    const circumference = 2 * Math.PI * 21.5;
+    
+    // 計算偏移量 (逆時針倒扣)
+    // b/a 弧度對應：offset = circumference * (1 - b/a)
+    const offset = circumference * ((remainingTicks / totalTicks));
+    
+    timerBar.style.strokeDashoffset = offset;
+    timerText.innerText = Math.max(0, Math.ceil(remainingTicks/ticksPerSec));
+}
+
+function onTimeUp() {
+    // 這裡放時間到之後的邏輯，例如自動跳下一題或顯示「時間到」
+    const userInput = document.getElementById('answerInput').value.replaceAll(' ', '');
+    const resultArea = document.getElementById('resultArea');
+    const resultBox = document.getElementById('resultBox');
+    const resultIcon = document.getElementById('resultIcon');
+    const resultText = document.getElementById('resultText');
+    const answerBox = document.getElementById('answerBox');
+    resultArea.classList.remove('hidden');
+    answerBox.classList.add('hidden');
+    resultBox.classList.remove('hidden');
+    let questionPool = get('trig_pool');
+    let currentQuestion = questionPool[0];
+    document.getElementById('keyboard').classList.add('hidden');
+    // 超時錯誤：移至末尾
+        let wrong_pool = get("wrong_pool");
+        questionPool.push(currentQuestion);
+        questionPool.splice(0, 1)[0]
+        if (!wrong_pool.includes(currentQuestion)) wrong_pool.push(currentQuestion);
+        let key = currentQuestion.key.slice(-2);
+        //localStorage.setItem('key',key);
+        if (key == "45") {
+            document.getElementById('explanationImg').src = "454590.png";
+        } else if (key == "30") {
+            document.getElementById('explanationImg').src = "306090.png";
+        } else if (key == "60"){
+            document.getElementById('explanationImg').src = "603090.png";
+        } else {
+
+        }
+        localStorage.setItem('wrong_pool', JSON.stringify(wrong_pool));
+        localStorage.setItem('trig_pool', JSON.stringify(questionPool));
+        resultBox.className = "flex items-center justify-between p-4 bg-red-50 border-red-200 text-red-700 rounded-xl mb-3 border shadow-sm";
+        resultIcon.className = "fa-solid fa-circle-xmark text-red-500 text-xl";
+        resultText.innerText = `時間到！正解：${currentQuestion.answer[0]}`;
+        document.getElementById('detailImageArea').classList.remove("hidden");
+        document.getElementById('nextBtn').classList.remove("hidden");
+}
+//endoftimer
+// 當點擊頁面其他地方時，關閉所有 popover
+window.onclick = function () {
+    const allPopovers = document.querySelectorAll('.popover');
+    allPopovers.forEach(p => {p.classList.remove('show');document.getElementById("lvl"+p.id.slice(1)+"info").classList = "text-gray-300 p-1 lvlinfo";});
+};
+
+// 支援 Enter 鍵輸入
+document.getElementById('answerInput').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') checkAnswer();
+});
