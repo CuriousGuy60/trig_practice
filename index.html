@@ -43,13 +43,16 @@
                 class="absolute top-4 right-6 text-xs font-bold bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
                 請選擇級數
             </div>
-
+            <!-- 全螢幕按鈕 (新增) -->
+            <button onclick="toggleFullScreen()" class="absolute bottom-4 right-6 text-gray-400 hover:text-gray-600 transition-all p-2 active:scale-90" title="全螢幕">
+                <i id="fullScreenIcon" class="fa-solid fa-expand"></i>
+            </button>
             <span class="text-sm text-gray-400 mb-2 block font-semibold tracking-widest uppercase">Question</span>
             <div id="questionText" class="text-3xl font-bold text-gray-800 math-font leading-relaxed">
                 準備好了嗎？
             </div>
-            <span id="questionTextAdd"
-                lass="text-sm text-gray-400 mb-2 block font-semibold tracking-widest hidden"></span>
+            <span id="questionTextAdd" class="text-sm text-gray-400 mb-2 block font-semibold tracking-widest ">推薦點右方按鈕進入全螢幕，體驗更佳</span>
+            
         </div>
         <!-- 1. 級數區 -->
         <div id='chooseLvlBox' class="mx-auto mb-4 w-full h-full">//裡面的用js生
@@ -170,6 +173,22 @@
             </div>
         </div>
     </div>
+    <!-- 彈窗容器：預設隱藏 (hidden) -->
+<div id="customConfirm" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+    <!-- 背景遮罩：毛玻璃效果 -->
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+    
+    <!-- 彈窗本體 -->
+    <div class="glass-card relative bg-white/90 p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform transition-all scale-95 opacity-0" id="confirmContent">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">確認</h3>
+        <p id="confirmMessage" class="text-gray-600 mb-6">這是一條確認訊息。</p>
+        
+        <div class="flex gap-3 justify-end">
+            <button id="confirmCancel" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors">取消</button>
+            <button id="confirmOk" class="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-shadow shadow-md">確定</button>
+        </div>
+    </div>
+</div>
     <script src="body.js"></script>
 
 </body>

@@ -57,7 +57,9 @@ async function loadLevels() {
                 currentLvlHtml += "<ul class=\"list-disc ml-4 space-y-1 text-gray-300\">";
 
                 lvlText[i].forEach(str => {
+                    currentLvlHtml+="<li>";
                     currentLvlHtml+=str.replaceAll(/M\{(.*)\}/g,"<span class='math-font'>$1</span>")
+                    currentLvlHtml+="</li>"
                 });
                 currentLvlHtml += "</ul></div></div>"; // 關閉 popover 的 div
             } else {
@@ -79,8 +81,8 @@ async function loadLevels() {
 // 執行
 loadLevels();
 // --- 出題邏輯 ---
-function initLevel(lvl) {
-    if (get(`trig_pool`).length > 0) if (!confirm(`確定要開新的${lvl}級練習嗎？進度將會重置。`)) return;
+async function initLevel(lvl) {
+    if (get(`trig_pool`).length > 0) {const confirmed = await my_confirm(`確定要開新的${lvl}級練習嗎？進度將會重置。`);if(!confirmed)return;};
     let questionPool = [];
     localStorage.setItem(`wrong_pool`, `[]`);
     const funcs = [`sin`, `cos`, `tan`];
@@ -280,9 +282,11 @@ function mytogglePopover(e, id) { //togglePopover與原生函數撞名
     allPopovers.forEach(p => {
         if (p.id !== id) {
             p.classList.remove('show');
-            document.getElementById("lvl"+p.id.slice(1)+"info").classList = "text-gray-300 p-1 lvlinfo";
+            document.getElementById("lvl"+p.id.slice(1)+"info").classList.add("text-gray-300");
+            document.getElementById("lvl"+p.id.slice(1)+"info").classList.remove("text-blue-400");
         }else{
-            document.getElementById("lvl"+p.id.slice(1)+"info").classList = "text-blue-400 p-1 lvlinfo";
+            document.getElementById("lvl"+p.id.slice(1)+"info").classList.remove("text-gray-300");
+            document.getElementById("lvl"+p.id.slice(1)+"info").classList.add("text-blue-400");
         }
     });
 
@@ -365,13 +369,93 @@ function onTimeUp() {
         document.getElementById('nextBtn').classList.remove("hidden");
 }
 //endoftimer
+function my_confirm(str) {
+    const modal = document.getElementById('customConfirm');
+    const content = document.getElementById('confirmContent');
+    const message = document.getElementById('confirmMessage');
+    const okBtn = document.getElementById('confirmOk');
+    const cancelBtn = document.getElementById('confirmCancel');
+
+    message.innerText = str;
+
+    // 顯示彈窗
+    modal.classList.remove('hidden');
+    // 小延遲觸發動畫
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+
+    return new Promise((resolve) => {
+        const handleOk = () => {
+            closeModal();
+            resolve(true);
+        };
+
+        const handleCancel = () => {
+            closeModal();
+            resolve(false);
+        };
+
+        function closeModal() {
+            content.classList.replace('scale-100', 'scale-95');
+            content.classList.replace('opacity-100', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+            
+            // 移除監聽器避免記憶體洩漏
+            okBtn.removeEventListener('click', handleOk);
+            cancelBtn.removeEventListener('click', handleCancel);
+        }
+
+        okBtn.addEventListener('click', handleOk);
+        cancelBtn.addEventListener('click', handleCancel);
+    });
+}
+
+// 使用範例
+async function test() {
+    const result = await my_confirm("你確定要刪除這個關卡嗎？");
+    if (result) {
+        console.log("使用者點了確定");
+    } else {
+        console.log("使用者點了取消");
+    }
+}
 // 當點擊頁面其他地方時，關閉所有 popover
 window.onclick = function () {
     const allPopovers = document.querySelectorAll('.popover');
-    allPopovers.forEach(p => {p.classList.remove('show');document.getElementById("lvl"+p.id.slice(1)+"info").classList = "text-gray-300 p-1 lvlinfo";});
+    allPopovers.forEach(p => {p.classList.remove('show');
+            document.getElementById("lvl"+p.id.slice(1)+"info").classList.add("text-gray-300");
+            document.getElementById("lvl"+p.id.slice(1)+"info").classList.remove("text-blue-400");});
 };
 
 // 支援 Enter 鍵輸入
 document.getElementById('answerInput').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') checkAnswer();
+});
+function toggleFullScreen() {
+    const icon = document.getElementById('fullScreenIcon');
+    
+    if (!document.fullscreenElement) {
+        // 進入全螢幕 (通常讓 document.documentElement 即整個網頁全螢幕)
+        document.documentElement.requestFullscreen().then(() => {
+            icon.classList.replace('fa-expand', 'fa-compress');
+        }).catch(err => {
+            alert(`無法切換全螢幕: ${err.message}`);
+        });
+    } else {
+        // 退出全螢幕
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+            icon.classList.replace('fa-compress', 'fa-expand');
+        }
+    }
+}
+
+// 監聽 ESC 鍵切換回原本圖示
+document.addEventListener('fullscreenchange', () => {
+    const icon = document.getElementById('fullScreenIcon');
+    if (!document.fullscreenElement) {
+        icon.classList.replace('fa-compress', 'fa-expand');
+    }
 });
