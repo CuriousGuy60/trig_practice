@@ -127,7 +127,7 @@ async function initLevel(lvl) {
                                 break;
                             case `tan`:
                                 if (a == 0) break;
-                                else questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: standardAnswers[`tan${a}`] .map(e => `-` + e)});
+                                else questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: standardAnswers[`tan${90-a}`] .map(e => `-` + e)});
                                 break;
                         }
                         //push180
@@ -149,7 +149,7 @@ async function initLevel(lvl) {
                                 break;
                             case `tan`:
                                 if (a == 0) break;
-                                else questionPool.push({ display: `${f}${a + 270}°`, key: `${f}${a + 270}`, answer: standardAnswers[`tan${a}`] .map(e => `-` + e)});
+                                else questionPool.push({ display: `${f}${a + 270}°`, key: `${f}${a + 270}`, answer: standardAnswers[`tan${90-a}`] .map(e => `-` + e)});
                                 break;
                         }
                     });
