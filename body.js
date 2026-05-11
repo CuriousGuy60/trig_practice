@@ -7,7 +7,7 @@ const standardAnswers = {
     'cos30': ['√3/2'], 'cos45': ['1/√2', '√2/2'], 'cos60': ['1/2'],
     'tan30': ['1/√3', '√3/3'], 'tan45': ['1'], 'tan60': ['√3']
 };
-const lvlqnum = { '1': '9', '2': '46', '3': '0' };
+const lvlqnum = { '1': '9', '2': '20', '3': '20' };
 let temp = get('trig_pool');
 if (temp != null && temp.length > 0) {
     /*renderQuestion();
@@ -154,6 +154,62 @@ async function initLevel(lvl) {
                         }
                     });
                 });
+                questionPool.splice(20);
+                break;
+            }
+        case 3:
+            {
+                let angles = [0, 30, 45, 60];
+                let deltas = [];//-6~5
+                for (let x=-6;x<=5;++x){
+                    deltas.push(x);
+                }
+                console.log(deltas);
+                deltas.forEach(d=>{
+                    funcs.forEach(f => {
+                        angles.forEach(a => {
+                            //original
+                            questionPool.push({ display: `${f}${a}°`, key: `${f}${a}`, answer: standardAnswers[`${f}${a}`] });
+                            //push 90
+                            switch (f) {
+                                case `sin`:
+                                    questionPool.push({ display: `${f}${a+360*d + 90}°`, key: `${f}${a+360*d + 90}`, answer: standardAnswers[`cos${a}`] });
+                                    break;
+                                case `cos`:
+                                    if (a == 0) questionPool.push({ display: `${f}${a+360*d + 90}°`, key: `${f}${a+360*d + 90}`, answer: [`0`] });
+                                    else questionPool.push({ display: `${f}${a+360*d + 90}°`, key: `${f}${a+360*d + 90}`, answer: standardAnswers[`sin${a}`] .map(e => `-` + e)});
+                                    break;
+                                case `tan`:
+                                    if (a == 0) break;
+                                    else questionPool.push({ display: `${f}${a+360*d + 90}°`, key: `${f}${a+360*d + 90}`, answer: standardAnswers[`tan${90-a}`] .map(e => `-` + e)});
+                                    break;
+                            }
+                            //push180
+                            switch (f) {
+                                case `tan`:
+                                    questionPool.push({ display: `${f}${a+360*d + 180}°`, key: `${f}${a+360*d + 180}`, answer: standardAnswers[`${f}${a}`] });
+                                    break;
+                                default:
+                                    questionPool.push({ display: `${f}${a+360*d + 180}°`, key: `${f}${a+360*d + 180}`, answer: standardAnswers[`${f}${a}`] .map(e => (e === `0` ? `0` : `-` + e))});
+                                    break;
+                            }
+                            //push 270
+                            switch (f) {
+                                case `sin`:
+                                    questionPool.push({ display: `${f}${a+360*d + 270}°`, key: `${f}${a+360*d + 270}`, answer: standardAnswers[`cos${a}`].map(e => (e === `0` ? `0` : `-` + e)) });
+                                    break;
+                                case `cos`:
+                                    questionPool.push({ display: `${f}${a+360*d + 270}°`, key: `${f}${a+360*d + 270}`, answer: standardAnswers[`sin${a}`] });
+                                    break;
+                                case `tan`:
+                                    if (a == 0) break;
+                                    else questionPool.push({ display: `${f}${a+360*d + 270}°`, key: `${f}${a+360*d + 270}`, answer: standardAnswers[`tan${90-a}`] .map(e => `-` + e)});
+                                    break;
+                            }
+                        });
+                    });
+                });
+                questionPool.splice(20);
                 break;
             }
         default: return;
@@ -238,6 +294,8 @@ function checkAnswer() {
         if (!wrong_pool.includes(currentQuestion)) wrong_pool.push(currentQuestion);
         let key = currentQuestion.key.slice(-2);
         //localStorage.setItem('key',key);
+        
+        document.getElementById('detailImageArea').classList.remove("hidden");
         if (key == "45") {
             document.getElementById('explanationImg').src = "454590.png";
         } else if (key == "30") {
@@ -245,14 +303,14 @@ function checkAnswer() {
         } else if (key == "60"){
             document.getElementById('explanationImg').src = "603090.png";
         } else {
-
+            
+        document.getElementById('detailImageArea').classList.add("hidden");
         }
         localStorage.setItem('wrong_pool', JSON.stringify(wrong_pool));
         localStorage.setItem('trig_pool', JSON.stringify(questionPool));
         resultBox.className = "flex items-center justify-between p-4 bg-red-50 border-red-200 text-red-700 rounded-xl mb-3 border shadow-sm";
         resultIcon.className = "fa-solid fa-circle-xmark text-red-500 text-xl";
         resultText.innerText = `錯誤，正解：${currentQuestion.answer[0]}`;
-        document.getElementById('detailImageArea').classList.remove("hidden");
         document.getElementById('nextBtn').classList.remove("hidden");
     }
 }
