@@ -84,6 +84,7 @@
     border:0.05em;
     border-color:orange;
     border-style:dashed;
+    min-width: 1em;
 }
 @keyframes blink-animation {
     to {
