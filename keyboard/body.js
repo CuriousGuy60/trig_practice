@@ -133,32 +133,30 @@ function myArrowRight(){
         }
     }else{
         const nxtId = nxt.getAttribute('data-id');
-        for (let i=0;i<N;++i){
-            if (nxt.className === "digit"){//digit node
-                nxt.after(cursor);
-                
-            }else if (nxtId.startsWith('textbox-')){
-                if (nxt.getAttribute('data-chain')==="true"){//either denominator or numerator
-                    if (nxt.nextElementSibling === null){nxt.parentElement.appendChild(cursor);}//numerator
-                    else {nxt = nxt.nextElementSibling; nxt.appendChild(cursor);}//denominator
-                }
-                nxt.before(cursor);
-                
+        if (nxt.className === "digit"){//digit node
+            nxt.after(cursor);
+            
+        }else if (nxtId.startsWith('textbox-')){
+            if (nxt.getAttribute('data-chain')==="true"){//either denominator or numerator
+                if (nxt.nextElementSibling === null){nxt.parentElement.appendChild(cursor);}//numerator
+                else {nxt = nxt.nextElementSibling; nxt.appendChild(cursor);}//denominator
+            }
+            nxt.before(cursor);
+            
 
-            }else if (nxtId.startsWith('fraction-')){//fraction
-                if(nxt.firstChild.firstChild === null){
-                    nxt.firstChild.appendChild(cursor);
-                }else{
-                    nxt.firstChild.firstChild.before(cursor);
-                }
-            }else if (nxtId.startsWith("sqrtbx-")){
-                if(nxt.lastChild.firstChild === null){
-                    nxt.lastChild.appendChild(cursor);
-                    
-                }else{
-                    nxt.lastChild.firstChild.firstChild.before(cursor);
-                    
-                }
+        }else if (nxtId.startsWith('fraction-')){//fraction
+            if(nxt.firstChild.firstChild === null){
+                nxt.firstChild.appendChild(cursor);
+            }else{
+                nxt.firstChild.firstChild.before(cursor);
+            }
+        }else if (nxtId.startsWith("sqrtbx-")){
+            if(nxt.lastChild.firstChild === null){
+                nxt.lastChild.appendChild(cursor);
+                
+            }else{
+                nxt.lastChild.firstChild.firstChild.before(cursor);
+                
             }
         }
     }

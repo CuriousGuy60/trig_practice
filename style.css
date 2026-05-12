@@ -76,3 +76,6 @@ html, body {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+#p3{
+    right:0;
+}
