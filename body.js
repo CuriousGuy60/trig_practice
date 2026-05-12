@@ -2,10 +2,10 @@
 const angles = [30, 45, 60];
 const funcs = ['sin', 'cos', 'tan'];
 const standardAnswers = {
-    'cos0': ['1'], 'sin0': ['0'], 'tan0': ['0'],
-    'sin30': ['1/2'], 'sin45': ['1/√2', '√2/2'], 'sin60': ['√3/2'],
-    'cos30': ['√3/2'], 'cos45': ['1/√2', '√2/2'], 'cos60': ['1/2'],
-    'tan30': ['1/√3', '√3/3'], 'tan45': ['1'], 'tan60': ['√3']
+    "cos0": "1", "sin0": "0", "tan0": "0",
+    "sin30": "1/2", "sin45": "1/sqrt(2)", "sin60": "sqrt(3)/2",
+    "cos30": "sqrt(3)/2", "cos45": "1/sqrt(2)", "cos60": "1/2",
+    "tan30": "1/sqrt(3)", "tan45": "1", "tan60": "sqrt(3)"
 };
 const lvlqnum = { '1': '9', '2': '20', '3': '20' };
 let temp = get('trig_pool');
@@ -23,6 +23,7 @@ let timeLimit = 10;//一題10秒
 let ticksPerSec;
 let totalTicks; 
 let tick;
+let textcount = 0;
 //document.getElementById("timerBar").classList.add(`duration-${Math.floor(tick)}`);
 let remainingTicks = totalTicks; // 剩餘tick
 
@@ -123,11 +124,11 @@ async function initLevel(lvl) {
                                 break;
                             case `cos`:
                                 if (a == 0) questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: [`0`] });
-                                else questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: standardAnswers[`sin${a}`] .map(e => `-` + e)});
+                                else questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: '-'+standardAnswers[`sin${a}`]});
                                 break;
                             case `tan`:
                                 if (a == 0) break;
-                                else questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: standardAnswers[`tan${90-a}`] .map(e => `-` + e)});
+                                else questionPool.push({ display: `${f}${a + 90}°`, key: `${f}${a + 90}`, answer: '-'+standardAnswers[`tan${90-a}`]});
                                 break;
                         }
                         //push180
@@ -136,20 +137,22 @@ async function initLevel(lvl) {
                                 questionPool.push({ display: `${f}${a + 180}°`, key: `${f}${a + 180}`, answer: standardAnswers[`${f}${a}`] });
                                 break;
                             default:
-                                questionPool.push({ display: `${f}${a + 180}°`, key: `${f}${a + 180}`, answer: standardAnswers[`${f}${a}`] .map(e => (e === `0` ? `0` : `-` + e))});
+                                const e = standardAnswers[`${f}${a}`];
+                                questionPool.push({ display: `${f}${a + 180}°`, key: `${f}${a + 180}`, answer: (e === `0` ? `0` : `-` + e)});
                                 break;
                         }
                         //push 270
                         switch (f) {
                             case `sin`:
-                                questionPool.push({ display: `${f}${a + 270}°`, key: `${f}${a + 270}`, answer: standardAnswers[`cos${a}`].map(e => (e === `0` ? `0` : `-` + e)) });
+                                const e = standardAnswers[`cos${a}`];
+                                questionPool.push({ display: `${f}${a + 270}°`, key: `${f}${a + 270}`, answer: (e === `0` ? `0` : `-` + e) });
                                 break;
                             case `cos`:
                                 questionPool.push({ display: `${f}${a + 270}°`, key: `${f}${a + 270}`, answer: standardAnswers[`sin${a}`] });
                                 break;
                             case `tan`:
                                 if (a == 0) break;
-                                else questionPool.push({ display: `${f}${a + 270}°`, key: `${f}${a + 270}`, answer: standardAnswers[`tan${90-a}`] .map(e => `-` + e)});
+                                else questionPool.push({ display: `${f}${a + 270}°`, key: `${f}${a + 270}`, answer: '-'+standardAnswers[`tan${90-a}`]});
                                 break;
                         }
                     });
@@ -177,11 +180,17 @@ async function initLevel(lvl) {
                                     break;
                                 case `cos`:
                                     if (a == 0) questionPool.push({ display: `${f}${a+360*d + 90}°`, key: `${f}${a+360*d + 90}`, answer: [`0`] });
-                                    else questionPool.push({ display: `${f}${a+360*d + 90}°`, key: `${f}${a+360*d + 90}`, answer: standardAnswers[`sin${a}`] .map(e => `-` + e)});
+                                    else {
+                                        let sAns = '-'+standardAnswers[`sin${a}`];
+                                        questionPool.push({ display: `${f}${a+360*d + 90}°`, key: `${f}${a+360*d + 90}`, answer: sAns});
+                                    }
                                     break;
                                 case `tan`:
                                     if (a == 0) break;
-                                    else questionPool.push({ display: `${f}${a+360*d + 90}°`, key: `${f}${a+360*d + 90}`, answer: standardAnswers[`tan${90-a}`] .map(e => `-` + e)});
+                                    else {
+                                        let sAns = '-'+standardAnswers[`tan${90-a}`];
+                                        questionPool.push({ display: `${f}${a+360*d + 90}°`, key: `${f}${a+360*d + 90}`, answer: sAns});
+                                    } 
                                     break;
                             }
                             //push180
@@ -190,20 +199,22 @@ async function initLevel(lvl) {
                                     questionPool.push({ display: `${f}${a+360*d + 180}°`, key: `${f}${a+360*d + 180}`, answer: standardAnswers[`${f}${a}`] });
                                     break;
                                 default:
-                                    questionPool.push({ display: `${f}${a+360*d + 180}°`, key: `${f}${a+360*d + 180}`, answer: standardAnswers[`${f}${a}`] .map(e => (e === `0` ? `0` : `-` + e))});
+                                    let sAns = standardAnswers[`${f}${a}`];
+                                    questionPool.push({ display: `${f}${a+360*d + 180}°`, key: `${f}${a+360*d + 180}`, answer:  (sAns === `0` ? `0` : `-` + sAns)});
                                     break;
                             }
                             //push 270
                             switch (f) {
                                 case `sin`:
-                                    questionPool.push({ display: `${f}${a+360*d + 270}°`, key: `${f}${a+360*d + 270}`, answer: standardAnswers[`cos${a}`].map(e => (e === `0` ? `0` : `-` + e)) });
+                                    let sAns = standardAnswers[`cos${a}`];
+                                    questionPool.push({ display: `${f}${a+360*d + 270}°`, key: `${f}${a+360*d + 270}`, answer: (sAns === `0` ? `0` : `-` + sAns) });
                                     break;
                                 case `cos`:
                                     questionPool.push({ display: `${f}${a+360*d + 270}°`, key: `${f}${a+360*d + 270}`, answer: standardAnswers[`sin${a}`] });
                                     break;
                                 case `tan`:
                                     if (a == 0) break;
-                                    else questionPool.push({ display: `${f}${a+360*d + 270}°`, key: `${f}${a+360*d + 270}`, answer: standardAnswers[`tan${90-a}`] .map(e => `-` + e)});
+                                    else questionPool.push({ display: `${f}${a+360*d + 270}°`, key: `${f}${a+360*d + 270}`, answer: '-'+standardAnswers[`tan${90-a}`]});
                                     break;
                             }
                         });
@@ -236,14 +247,14 @@ function renderQuestion() {
     document.getElementById('chooseLvlBox').classList.add('hidden');
     document.getElementById('detailImageArea').classList.add("hidden");
     document.getElementById('nextBtn').classList.add("hidden");
-    document.getElementById('answerInput').value = "";
+    clearEditor();
     document.getElementById('resultBox').classList.add('hidden');
     let questionPool = get('trig_pool');
     let wrong_pool = get('wrong_pool');
     if (questionPool.length > 0) {
         startTimer();
         document.getElementById('questionTextAdd').classList.add('hidden');
-        document.getElementById('answerBox').classList.remove('hidden');
+        document.getElementById('mathInputWrap').classList.remove('hidden');
         document.getElementById('keyboard').classList.remove('hidden');
         document.getElementById('progressCounter').innerText = '題目' + (parseInt(lvlqnum[get('lvl')], 10) - questionPool.length + 1).toString() + '/' + lvlqnum[get('lvl')];
         document.getElementById('questionText').innerText = questionPool[0].display;
@@ -253,7 +264,7 @@ function renderQuestion() {
         document.getElementById('questionTextAdd').classList.remove('hidden');
         document.getElementById('keyboard').classList.add('hidden');
         document.getElementById('timerContainer').classList.add('hidden');
-        document.getElementById('answerBox').classList.add('hidden');
+        document.getElementById('mathInputWrap').classList.add('hidden');
         if (wrong_pool.length>0){
             document.getElementById('questionTextAdd').innerText = "繼續複習？";
             document.getElementById('questionText').innerText = "⚠️ 還有錯題";
@@ -264,70 +275,190 @@ function renderQuestion() {
     }
 }
 function checkAnswer() {
-    if (get('trig_pool').length = 0) return;
+    console.log('--- 檢查答案開始 ---'); // 改成明顯一點的字樣
+    if (get('trig_pool').length === 0) return;
+    console.log('Ihavequestion');
     clearInterval(timerInterval);
-    const userInput = document.getElementById('answerInput').value.replaceAll(' ', '');
+    let userInput = "";
+    userInput = userAnswer_toStr(editor);
     const resultArea = document.getElementById('resultArea');
     const resultBox = document.getElementById('resultBox');
     const resultIcon = document.getElementById('resultIcon');
     const resultText = document.getElementById('resultText');
-    const answerBox = document.getElementById('answerBox');
+    const resultText2 = document.getElementById('resultText2');
+    resultText2.classList.add('hidden');
+    const mathInputWrap = document.getElementById('mathInputWrap');
     resultArea.classList.remove('hidden');
-    answerBox.classList.add('hidden');
+    mathInputWrap.classList.add('hidden');
     resultBox.classList.remove('hidden');
     let questionPool = get('trig_pool');
-    let currentQuestion = questionPool[0];
+    const currentQuestion = questionPool[0];
     document.getElementById('keyboard').classList.add('hidden');
-    if (currentQuestion.answer.includes(userInput)) {
-        // 正確
-        resultBox.className = "flex items-center justify-between p-4 bg-green-50 border-green-200 text-green-700 rounded-xl mb-3 border shadow-sm";
-        resultIcon.className = "fa-solid fa-circle-check text-green-500 text-xl";
-        resultText.innerText = '正確！自動進入下一題';
-        questionPool.splice(0, 1);
-        localStorage.setItem('trig_pool', JSON.stringify(questionPool));
-        setTimeout(renderQuestion, 600);
-    } else {
-        // 錯誤：移至末尾
-        let wrong_pool = get("wrong_pool");
-        questionPool.push(currentQuestion);
-        questionPool.splice(0, 1)[0]
-        if (!wrong_pool.includes(currentQuestion)) wrong_pool.push(currentQuestion);
-        let key = currentQuestion.key.slice(-2);
-        //localStorage.setItem('key',key);
-        
-        document.getElementById('detailImageArea').classList.remove("hidden");
-        if (key == "45") {
-            document.getElementById('explanationImg').src = "454590.png";
-        } else if (key == "30") {
-            document.getElementById('explanationImg').src = "306090.png";
-        } else if (key == "60"){
-            document.getElementById('explanationImg').src = "603090.png";
-        } else {
+    console.log(`Checkanswer, ${userInput}?=${currentQuestion.answer}`);
+    console.log('normallog');
+    // clear the expression
+    MathJax.typesetClear();
+    console.log('cleared mathjax!');
+    document.querySelectorAll('mjx-container').forEach(a=>{a.remove();});
+    switch (userInput){
+        case '未輸入':{
+            resultText2.classList.add('hidden');
+            resultBox.className = "flex items-center p-4 bg-red-50 border-red-200 text-red-700 rounded-xl h-[15dvh] mb-3 border shadow-sm";
+            resultIcon.className = "fa-solid fa-circle-xmark text-red-500 text-xl";
+            resultText.innerText = `未輸入，正解：`;
+                const trans = strToSvg(currentQuestion.answer);
+                if (trans){
+                    resultBox.appendChild(trans);
+                }
             
-        document.getElementById('detailImageArea').classList.add("hidden");
+            document.getElementById('nextBtn').classList.remove("hidden");
+            break;
         }
-        localStorage.setItem('wrong_pool', JSON.stringify(wrong_pool));
-        localStorage.setItem('trig_pool', JSON.stringify(questionPool));
-        resultBox.className = "flex items-center justify-between p-4 bg-red-50 border-red-200 text-red-700 rounded-xl mb-3 border shadow-sm";
-        resultIcon.className = "fa-solid fa-circle-xmark text-red-500 text-xl";
-        resultText.innerText = `錯誤，正解：${currentQuestion.answer[0]}`;
-        document.getElementById('nextBtn').classList.remove("hidden");
+        case '不合規':{
+            resultText2.classList.add('hidden');
+            resultBox.className = "flex items-center p-4 bg-red-50 border-red-200 text-red-700 rounded-xl h-[15dvh] mb-3 border shadow-sm";
+            resultIcon.className = "fa-solid fa-circle-xmark text-red-500 text-xl";
+            resultText.innerText = `不合規，正解：`;
+                const trans = strToSvg(currentQuestion.answer);
+                if (trans){
+                    resultBox.appendChild(trans);
+                }
+            
+            document.getElementById('nextBtn').classList.remove("hidden");
+            break;
+
+        }default:{
+            if (math.symbolicEqual(userInput,currentQuestion.answer)) {
+                // 正確
+                resultBox.className = "flex items-center p-4 bg-green-50 border-green-200 text-green-700 rounded-xl h-[15dvh] mb-3 border shadow-sm";
+                resultIcon.className = "fa-solid fa-circle-check text-green-500 text-xl";
+                resultText.innerText = '正確！自動進入下一題';
+                setTimeout(renderQuestion, 600);
+            } else {
+                // 錯誤：移至末尾
+                let wrong_pool = get("wrong_pool");
+                questionPool.push(currentQuestion);
+                if (!wrong_pool.includes(currentQuestion)) wrong_pool.push(currentQuestion);
+                let key = currentQuestion.key.slice(-2);
+                //localStorage.setItem('key',key);
+                
+                document.getElementById('detailImageArea').classList.remove("hidden");
+                if (key == "45") {
+                    document.getElementById('explanationImg').src = "454590.png";
+                } else if (key == "30") {
+                    document.getElementById('explanationImg').src = "306090.png";
+                } else if (key == "60"){
+                    document.getElementById('explanationImg').src = "603090.png";
+                } else {
+                    
+                document.getElementById('detailImageArea').classList.add("hidden");
+                }
+                localStorage.setItem('wrong_pool', JSON.stringify(wrong_pool));
+                localStorage.setItem('trig_pool', JSON.stringify(questionPool));
+                resultBox.className = "flex items-center p-4 bg-red-50 border-red-200 text-red-700 rounded-xl h-[15dvh] mb-3 border shadow-sm";
+                resultIcon.className = "fa-solid fa-circle-xmark text-red-500 text-xl";
+                resultText.innerText = `，正解：`;
+                resultText2.classList.remove('hidden');
+                resultText2.innerText = '您輸入：';
+                const trans = strToSvg(currentQuestion.answer);
+                if (trans){
+                    resultBox.appendChild(trans);
+                }
+                const userSvg = strToSvg(userInput);
+                console.log(`userInput: |${JSON.stringify(userInput)}`);
+                if (userSvg){
+                    console.log('draw userSvg');
+                    resultText2.after(userSvg);
+                }
+                document.getElementById('nextBtn').classList.remove("hidden");
+            }
+            break;
+        }
     }
+    
+    questionPool.splice(0, 1);
+    localStorage.setItem('trig_pool', JSON.stringify(questionPool));
+    
+
+        
+}
+function strToSvg(str){
+    let node = "";
+    try {
+        // parse the expression
+        node = math.parse(str);
+        console.log(`I passed the node: ${node}`);
+        try {
+            // export the expression to LaTeX
+            const latex = (node ? node.toTex({parenthesis: 'keep', implicit: 'hide'}) : '');
+            console.log('LaTeX expression:', latex);
+
+            
+            const container = MathJax.tex2svg(latex);
+            return container;
+        }
+        catch (err) {console.log("mathJax 轉換失敗");}
+    }
+    catch (err) {
+        //resultText.innerHTML += '<span style="color: red;">' + err.toString() + '</span>';
+    }
+    return null;
 }
 
 // --- 工具功能 ---
 function press(a) {
-    const input = document.getElementById('answerInput');
-    input.value += a;
-}
-function backspace() {
-    const input = document.getElementById('answerInput');
-    const val = input.value;
-
-    if (val) {
-        // 刪除游標前的一個字
-        input.value = val.slice(0, -1);
+    console.log('pressed some');
+    switch(a){
+        case 'Backspace':{
+            myBackspace();
+            return;
+        }
+        case 'Enter':{
+            checkAnswer();
+            break;
+        }
+        
+        case 'fraction':{
+            addFraction();
+            break;
+        }
+        case 'sqrt':{
+            addSqrt();
+            console.log("igotusqrt");
+            break;
+        }
+        case 'ArrowLeft':{
+            myArrowLeft();
+            break;
+        }
+        case 'ArrowRight':{
+            myArrowRight();
+            break;
+        }
+        default:{
+            const cursor = document.getElementsByClassName("virtual-cursor")[0];
+            const allowedChars = /[0-9\-]/;
+            if (a.length === 1 && !allowedChars.test(a)) {
+                // 阻擋不符合規則的字元輸入
+            }else if (a.length === 1){
+                console.log('1~0entered');
+                let element = document.createElement("span");
+                element.setAttribute('data-id',`text-${textcount}`);
+                element.className = "digit";
+                element.innerText = `${a}`;
+                ++textcount;
+                if (cursor.parentElement.className === 'digit') {
+                    cursor.parentElement.before(element);
+                }
+                else cursor.before(element);
+            }
+            break;
+        }
     }
+    const ansinput = document.getElementById("answerInput");
+    ansinput.innerText = "  ";
+    ansinput.classList.remove("text-gray-400");
+    ansinput.classList.add("text-white");
 }
 function mytogglePopover(e, id) { //togglePopover與原生函數撞名
     // 阻止事件冒泡，避免觸發 window 的點擊事件
@@ -390,18 +521,21 @@ function updateTimerUI() {
 
 function onTimeUp() {
     // 這裡放時間到之後的邏輯，例如自動跳下一題或顯示「時間到」
-    const userInput = document.getElementById('answerInput').value.replaceAll(' ', '');
     const resultArea = document.getElementById('resultArea');
     const resultBox = document.getElementById('resultBox');
     const resultIcon = document.getElementById('resultIcon');
     const resultText = document.getElementById('resultText');
-    const answerBox = document.getElementById('answerBox');
+    const resultText2 = document.getElementById('resultText2');
+    resultText2.classList.add('hidden');
+    const mathInputWrap = document.getElementById('mathInputWrap');
     resultArea.classList.remove('hidden');
-    answerBox.classList.add('hidden');
+    mathInputWrap.classList.add('hidden');
     resultBox.classList.remove('hidden');
     let questionPool = get('trig_pool');
     let currentQuestion = questionPool[0];
     document.getElementById('keyboard').classList.add('hidden');
+    
+    document.querySelectorAll('mjx-container').forEach(a=>{a.remove();});
     // 錯誤：移至末尾
         let wrong_pool = get("wrong_pool");
         questionPool.push(currentQuestion);
@@ -409,21 +543,26 @@ function onTimeUp() {
         if (!wrong_pool.includes(currentQuestion)) wrong_pool.push(currentQuestion);
         let key = currentQuestion.key.slice(-2);
         //localStorage.setItem('key',key);
+        document.getElementById('detailImageArea').classList.remove("hidden");
         if (key == "45") {
             document.getElementById('explanationImg').src = "454590.png";
         } else if (key == "30") {
             document.getElementById('explanationImg').src = "306090.png";
         } else if (key == "60"){
             document.getElementById('explanationImg').src = "603090.png";
-        } else {
-
+        } else {  
+            document.getElementById('detailImageArea').classList.add("hidden");
         }
         localStorage.setItem('wrong_pool', JSON.stringify(wrong_pool));
         localStorage.setItem('trig_pool', JSON.stringify(questionPool));
-        resultBox.className = "flex items-center justify-between p-4 bg-red-50 border-red-200 text-red-700 rounded-xl mb-3 border shadow-sm";
+        resultBox.className = "flex items-center p-4 bg-red-50 border-red-200 text-red-700 rounded-xl h-[15dvh] mb-3 border shadow-sm";
         resultIcon.className = "fa-solid fa-circle-xmark text-red-500 text-xl";
-        resultText.innerText = `逾時，正解：${currentQuestion.answer[0]}`;
-        document.getElementById('detailImageArea').classList.remove("hidden");
+        resultText.innerText = `逾時，正解：`;
+        const trans = strToSvg(currentQuestion.answer);
+        if (trans){
+            resultBox.appendChild(trans);
+        }
+
         document.getElementById('nextBtn').classList.remove("hidden");
 }
 //endoftimer
@@ -487,10 +626,6 @@ window.onclick = function () {
             document.getElementById("lvl"+p.id.slice(1)+"info").classList.remove("text-blue-400");});
 };
 
-// 支援 Enter 鍵輸入
-document.getElementById('answerInput').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') checkAnswer();
-});
 function toggleFullScreen() {
     const icon = document.getElementById('fullScreenIcon');
     
@@ -509,11 +644,73 @@ function toggleFullScreen() {
         }
     }
 }
-
+function userAnswer_toStr(component){
+    let res = "";
+    if (component === editor){
+        const cursor = document.getElementsByClassName("virtual-cursor")[0];
+        const ansinput = document.getElementById("answerInput");
+        editor.append(cursor,ansinput);
+        for (const child of editor.children){
+            if(child === cursor)break;
+            res+=userAnswer_toStr(child);
+        }
+        try{
+            if (res!==""){
+                console.log('res非空');
+                console.log(`res: ${res}`);
+                math.parse(res);
+                return res;
+            }else{
+                return "未輸入";
+            }
+        }catch(e){console.log(`不合規${res}`);return "不合規";}
+    }else if (component.className === 'digit'){
+            return component.innerText;
+    }else if (component.getAttribute('data-id').startsWith('textbox-')||component.getAttribute('data-id').startsWith('sqrt-')){
+        if (component.children.length!==0){
+            for (const child of component.children){
+                res+=userAnswer_toStr(child);
+            }
+        }else{
+            //return "0";
+            return "";
+        }
+    }else if (component.getAttribute('data-id').startsWith('sqrtbx-')){
+        res="sqrt("+userAnswer_toStr(component.lastChild.firstChild)+")";
+    }else if (component.getAttribute('data-id').startsWith('fraction-')){
+        res="(("+userAnswer_toStr(component.firstChild)+")/("+userAnswer_toStr(component.lastChild)+"))";
+    }
+    return res;
+}
 // 監聽 ESC 鍵切換回原本圖示
 document.addEventListener('fullscreenchange', () => {
     const icon = document.getElementById('fullScreenIcon');
     if (!document.fullscreenElement) {
         icon.classList.replace('fa-compress', 'fa-expand');
+    }
+});
+document.addEventListener('keydown',(e)=>{
+    if (e.key.length === 1) {e.preventDefault();return;}
+    switch (e.key){
+        case 'Backspace':
+            e.preventDefault();
+            break;
+        case 'Enter':
+            e.preventDefault();
+            break;
+        case 'Tab':
+            e.preventDefault();
+            break;
+        case 'ArrowLeft':
+            e.preventDefault();
+            myArrowLeft();
+            break;
+        case 'ArrowRight':
+            e.preventDefault();
+            myArrowRight();
+            break;
+        default:{
+
+        }
     }
 });

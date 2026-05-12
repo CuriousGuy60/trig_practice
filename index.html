@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>三角函數題目產生器</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script><!--tailwindcss-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/14.8.1/math.js"></script><!--math.js-->
+    <!-- 將原本的改為這個 -->
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js"></script><!--mathjax-->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"><!--font-awesome-free-->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="keyboard/style.css">
 </head>
 
 <body class="p-4 min-h-screen pb-20">
@@ -114,44 +119,56 @@
         </div>
         <div id="ansUIBox" class="flex flex-col mx-auto w-full h-full hidden">
             <!-- 3. 解答框區 -->
-            <div id="answerBox" class="flex items-center mx-auto mb-4 w-full hidden">
-                    <input readonly type="text" id="answerInput" spellcheck="false" autocomplete="off"
-                        placeholder="請用下方鍵盤輸入答案"
-                        class=" flex p-4 rounded-xl border-2 border-transparent focus:border-blue-500 focus:outline-none shadow-inner bg-white text-lg font-medium transition-all w-full">
+            <div id="mathInputWrap" class="flex p-4 mb-4 items-center border-2 border-transparent focus:border-blue-500 focus:outline-none shadow-inner bg-white text-4xl rounded-xl font-medium transition-all w-full h-[15dvh] hidden">
+                <div id="mathInput" role="textbox" contenteditable="true" aria-multiline="false" aria-label="答案輸入框" class="mathInput items-center w-full h-full">
+                    <span class="virtual-cursor"></span>
+                    <span id="answerInput" class="text-gray-400">請用下方鍵盤輸入答案</span>
+                </div>
             </div>
             <div id="resultBox"
-                class="hidden flex items-centerjustify-between p-4 rounded-xl mb-3 shadow-sm transition-colors border">
-                <div class="flex items-center gap-3">
+                class="hidden flex items-center p-4 rounded-xl mb-3 shadow-sm transition-colors h-[15dvh] border">
+                <div class="flex items-center gap-3" id = "resultTipBox">
                     <i id="resultIcon" class="fa-solid"></i>
-                    <span id="resultText" class="font-bold"></span>
+                    <span class="flex items-center">
+                        <span id="resultText2" class="font-bold hidden"></span>
+                        <span id="resultText" class="font-bold"></span>
+                    </span>
                 </div>
             </div>
             <!-- 4. 虛擬鍵盤區 -->
-            <div id="keyboard" class="flex-1 grid grid-cols-4 grid-rows-4 gap-2 w-full hidden">
-                <!-- 第一排 -->
+            <div id="keyboard" class="flex-1 grid grid-cols-4 gap-2 w-full hidden">
+                <!-- 第一排 (1-3, /) -->
                 <button onclick="press('1')" class="key-btn">1</button>
                 <button onclick="press('2')" class="key-btn">2</button>
                 <button onclick="press('3')" class="key-btn">3</button>
-                <button onclick="press('/')" class="key-btn bg-gray-100 text-blue-600">/</button>
+                <button onclick="press('fraction')" class="key-btn bg-gray-100 text-blue-600">/</button>
 
-                <!-- 第二排 -->
+                <!-- 第二排 (4-6, -) -->
                 <button onclick="press('4')" class="key-btn">4</button>
                 <button onclick="press('5')" class="key-btn">5</button>
                 <button onclick="press('6')" class="key-btn">6</button>
                 <button onclick="press('-')" class="key-btn bg-gray-100 text-blue-600">-</button>
 
-                <!-- 第三排 -->
+                <!-- 第三排 (7-9, √) -->
                 <button onclick="press('7')" class="key-btn">7</button>
                 <button onclick="press('8')" class="key-btn">8</button>
                 <button onclick="press('9')" class="key-btn">9</button>
-                <button onclick="press('√')" class="key-btn bg-gray-100 text-blue-600">√</button>
+                <button onclick="press('sqrt')" class="key-btn bg-gray-100 text-blue-600">√</button>
 
-                <!-- 第四排 -->
+                <!-- 第四排 (方向鍵與 0) -->
+                <button onclick="press('ArrowLeft')" class="key-btn bg-gray-50 text-gray-600">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
                 <button onclick="press('0')" class="key-btn">0</button>
-                <button onclick="backspace()" class="key-btn bg-gray-100 text-red-500">
+                <button onclick="press('ArrowRight')" class="key-btn bg-gray-50 text-gray-600">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+                <button onclick="press('Backspace')" class="key-btn bg-gray-100 text-red-500">
                     <i class="fa-solid fa-backspace"></i>
                 </button>
-                <button onclick="checkAnswer()" class="key-btn col-span-2 bg-gray-800 text-white text-lg">ENTER</button>
+
+                <!-- 第五排 (ENTER) -->
+                <button onclick="press('Enter')" class="key-btn col-span-4 bg-gray-800 text-white text-lg py-3">ENTER</button>
             </div>
             <!-- 5. 答案與詳解區 -->
             <div id="resultArea" class="hidden grid grid-rows-4 grid-cols-4 gap-2 w-full h-full">
@@ -189,7 +206,8 @@
         </div>
     </div>
 </div>
-    <script src="body.js"></script>
+    <script src="./keyboard/body.js" defer></script>
+    <script src="./body.js" defer></script>
 
 </body>
 

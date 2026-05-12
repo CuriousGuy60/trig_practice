@@ -1,0 +1,92 @@
+.mathInput{
+    caret-color: transparent;
+    display: flex;
+    flex-direction: row;
+    min-width: 10px;
+    outline: none;
+    
+    /* 關鍵屬性：防止內容換行 */
+    white-space: nowrap; 
+    
+    /* 允許水平滾動，而不是把內容擠下去 */
+    overflow-x: auto;
+    overflow-y: hidden;
+    
+    /* 確保高度足夠容納根號的 1.2em */
+}
+.textbox{
+    display: inline-block;
+}
+.textbox:hover{
+    border:0.05em;
+    border-color:orange;
+    border-style:dashed;
+}
+.textbox:empty {
+    min-width: 1em;    /* 寬度至少一個字 */
+    min-height: 1.2em; /* 高度至少一個字高 */
+    vertical-align: middle;
+    background-color: rgba(255, 165, 0, 0.1); /* 稍微給點底色，方便開發時看位置 */
+}
+.fraction {
+    display: inline-flex;
+    flex-direction: column;   /* 確保垂直排列 */
+    vertical-align: middle;
+    text-align: center;
+    font-size: 0.9em;         /* 稍微縮小一點 */
+    margin: 0 0;          /* 與左右字元保持微小距離 */
+    line-height: 1.2;         /* 調整行高，讓分子分母靠近一點 */
+}
+
+
+.den {
+    /* 必須包含 width，否則線條不會顯示 */
+    border-top: 0.05em solid black; 
+    padding: 0.05em 0.05em 0 0.05em;   /* 分母上方留白，與分數線拉開距離 */
+}
+.sqrt {
+    /* 必須包含 width，否則線條不會顯示 */
+    display: inline-block;
+    padding: 0.02em 0.05em 0 0.05em;   /* 分母上方留白，與分數線拉開距離 */
+
+}
+.sqrtpic{
+    padding-bottom: 0.05em;
+}
+.sqrt:empty {
+    display: inline-block;
+    min-width: 1em;    /* 寬度至少一個字 */
+    min-height: 1em; /* 高度至少一個字高 */
+    vertical-align: middle;
+    background-color: rgba(255, 165, 0, 0.1); /* 稍微給點底色，方便開發時看位置 */
+}
+.sqrtout{
+    /* 必須包含 width，否則線條不會顯示 */
+    display: inline-block;
+    min-width: 1em;    /* 寬度至少一個字 */
+    min-height: 1.2em; /* 高度至少一個字高 */
+    border-top: 0.05em solid black; 
+    padding: 0.05em 0.1em 0.05em 0.1em;   /* 分母上方留白，與分數線拉開距離 */
+    margin-left:-0.05em;
+    overflow:visible;
+}
+.virtual-cursor {
+    display: inline-block;
+    width: 0.05em;             /* 游標寬度 */
+    height: 1em;          /* 根據字體高度調整 */
+    background-color: #000000; /* 亮橘色，適合你的 Web App 主題 */
+    vertical-align: middle;
+    
+    /* 核心：閃爍動畫 */
+    animation: blink-animation 1s steps(2, start) infinite;
+}
+.contain_cursor{
+    border:0.05em;
+    border-color:orange;
+    border-style:dashed;
+}
+@keyframes blink-animation {
+    to {
+        visibility: hidden; /* 在動畫的後半段隱藏 */
+    }
+}

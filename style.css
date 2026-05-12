@@ -17,16 +17,6 @@ body { background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont
     font-size: 0.875rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
 }
-#p3{right:0;left:auto;}
-/*.popover::after {
-    content: "";
-    position: absolute;
-    bottom: 100%;
-    left: 15px;
-    border-width: 8px;
-    border-style: solid;
-    border-color: transparent transparent #1f2937 transparent;
-}*/
 .show { display: block; animation: fadeIn 0.2s ease-out; }
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
@@ -78,4 +68,11 @@ html, body {
 /* 確保鍵盤不會因為內容過多而被擠壓變形 */
 #keyboard {
     flex-shrink: 0;
+}
+#mathInputWrap::-webkit-scrollbar {
+    display: none; /* 隱藏滾動條，讓介面乾淨 */
+}
+#mathInputWrap {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
