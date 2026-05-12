@@ -198,7 +198,7 @@ function addFraction(){
             tmp=tmp.previousElementSibling;
         }
         tmplist.reverse().forEach(a=>{bx1.append(a);});
-        bx1.append(cursor);
+        bx2.append(cursor);
     }else{
         bx1.append(bef);
         bx2.append(cursor);
