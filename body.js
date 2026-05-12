@@ -83,7 +83,7 @@ async function loadLevels() {
 loadLevels();
 // --- 出題邏輯 ---
 async function initLevel(lvl) {
-    if (get(`trig_pool`).length > 0) {const confirmed = await my_confirm(`確定要開新的${lvl}級練習嗎？進度將會重置。`);if(!confirmed)return;};
+    //if (get(`trig_pool`).length > 0) {const confirmed = await my_confirm(`確定要開新的${lvl}級練習嗎？進度將會重置。`);if(!confirmed)return;};
     let questionPool = [];
     localStorage.setItem(`wrong_pool`, `[]`);
     const funcs = [`sin`, `cos`, `tan`];

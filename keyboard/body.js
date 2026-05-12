@@ -85,37 +85,35 @@ function myArrowLeft(){
     let prev = cursor.previousElementSibling;
     if (prev === null){
         prev = cursor.parentElement;
-        if(prev.id==="mathInput") return;
+        if(prev.id==="mathInput") {}
         else if (prev.getAttribute('data-chain')==="true"){//either denominator or numerator
-            if (prev.previousElementSibling === null){prev = prev.parentElement;prev.before(cursor);return;}//numerator
-            else {prev = prev.previousElementSibling; prev.appendChild(cursor);return;}//denominator
+            if (prev.previousElementSibling === null){prev = prev.parentElement;prev.before(cursor);}//numerator
+            else {prev = prev.previousElementSibling; prev.appendChild(cursor);}//denominator
         }else if (prev.getAttribute('data-id').startsWith("sqrt-")){
                 prev.parentElement.parentElement.before(cursor);
             }
     }else{
         const prevId = prev.getAttribute('data-id');
-        for (let i=0;i<N;++i){
-            if (prev.className === "digit"){//digit node
-                prev.before(cursor);
-                break;
-            }else if (prevId.startsWith('textbox-')){
-                if (prev.getAttribute('data-chain')==="true"){//either denominator or numerator
-                    if (prev.previousElementSibling === null)prev = prev.parentElement;//numerator
-                    else {prev = prev.previousElementSibling; prev.appendChild(cursor);return;}//denominator
-                }
-                prev.before(cursor);
-                break;
-
-            }else if (prevId.startsWith('fraction-')){//fraction
-                if(prev.lastChild.firstChild === null){
-                    prev.lastChild.appendChild(cursor);
-                }else{
-                    prev.lastChild.firstChild.before(cursor);
-                }
-            }else if (prevId.startsWith("sqrtbx-")){
-                console.log('entered sqrt');
-                prev.lastChild.lastChild.appendChild(cursor);
+        if (prev.className === "digit"){//digit node
+            prev.before(cursor);
+        }else if (prevId.startsWith('textbox-')){
+            if (prev.getAttribute('data-chain')==="true"){//either denominator or numerator
+                if (prev.previousElementSibling === null){prev.parentElement.before(cursor);}//numerator
+                else {prev = prev.previousElementSibling; prev.appendChild(cursor);}//denominator
             }
+            prev.before(cursor);
+            
+
+        }else if (prevId.startsWith('fraction-')){//fraction
+            if(prev.lastChild.firstChild === null){
+                prev.lastChild.appendChild(cursor);
+
+            }else{
+                prev.lastChild.lastChild.after(cursor);
+            }
+        }else if (prevId.startsWith("sqrtbx-")){
+            console.log('entered sqrt');
+            prev.lastChild.lastChild.appendChild(cursor);
         }
     }
     hightlightBox();
@@ -125,29 +123,27 @@ function myArrowRight(){
     let nxt = cursor.nextElementSibling;
     if (nxt === null){
         nxt = cursor.parentElement;
-        if(nxt.id==="mathInput") return;
+        if(nxt.id==="mathInput") {}
         else if (nxt.getAttribute('data-chain')==="true"){//either denominator or numerator
             if (nxt.nextElementSibling === null){nxt = nxt.parentElement;nxt.after(cursor);}//denominator
             else {nxt = nxt.nextElementSibling; if(nxt.firstChild === null){nxt.appendChild(cursor);}else{nxt.firstChild.before(cursor);}}//numerator
-            return;
         }else if(nxt.getAttribute('data-id').startsWith('sqrt')){
             nxt=nxt.parentElement.parentElement;
             nxt.after(cursor);
-            return;
         }
     }else{
         const nxtId = nxt.getAttribute('data-id');
         for (let i=0;i<N;++i){
             if (nxt.className === "digit"){//digit node
                 nxt.after(cursor);
-                break;
+                
             }else if (nxtId.startsWith('textbox-')){
                 if (nxt.getAttribute('data-chain')==="true"){//either denominator or numerator
-                    if (nxt.nextElementSibling === null)nxt = nxt.parentElement;//numerator
-                    else {nxt = nxt.nextElementSibling; nxt.appendChild(cursor);return;}//denominator
+                    if (nxt.nextElementSibling === null){nxt.parentElement.appendChild(cursor);}//numerator
+                    else {nxt = nxt.nextElementSibling; nxt.appendChild(cursor);}//denominator
                 }
                 nxt.before(cursor);
-                break;
+                
 
             }else if (nxtId.startsWith('fraction-')){//fraction
                 if(nxt.firstChild.firstChild === null){
@@ -158,10 +154,10 @@ function myArrowRight(){
             }else if (nxtId.startsWith("sqrtbx-")){
                 if(nxt.lastChild.firstChild === null){
                     nxt.lastChild.appendChild(cursor);
-                    return;
+                    
                 }else{
                     nxt.lastChild.firstChild.firstChild.before(cursor);
-                    return;
+                    
                 }
             }
         }
@@ -271,10 +267,11 @@ function clearEditor(){
 }
 function hightlightBox(){
     const cursor = document.getElementsByClassName("virtual-cursor")[0];
-    const rmvlist = document.getElementsByClassName("contain_cursor");
+    const rmvlist = document.querySelectorAll(".contain_cursor");
     let rmv = null;
     if (rmvlist.length === 0) rmv = null;
     else rmv = rmvlist[0];
+    console.log(`rmv: ${JSON.stringify(rmv)}`)
     if (rmv !== null) rmv.classList.remove("contain_cursor");
     if(cursor.parentElement.id === 'mathInput') return;
     const id = cursor.parentElement.getAttribute('data-id')
