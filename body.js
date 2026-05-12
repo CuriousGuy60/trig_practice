@@ -328,7 +328,9 @@ function checkAnswer() {
             break;
 
         }default:{
-            if (math.symbolicEqual(userInput,currentQuestion.answer)) {
+                console.log(`checkeq, ${userInput}?=${currentQuestion.answer}`);
+                console.log(`raw: ${JSON.stringify(userInput)} || ${JSON.stringify(currentQuestion.answer)}`);
+            if (math.evaluate(`(${userInput})-(${currentQuestion.answer})`)<1e-12) {
                 // 正確
                 resultBox.className = "flex items-center p-4 bg-green-50 border-green-200 text-green-700 rounded-xl h-[15dvh] mb-3 border shadow-sm";
                 resultIcon.className = "fa-solid fa-circle-check text-green-500 text-xl";
